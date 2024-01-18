@@ -22,6 +22,12 @@ jobs:
                     # Get the number of the newest PR (assuming it's the one triggering this action)
                     PR_NUMBER=${{ github.event.pull_request.number }}
 
+                    # Add a comment to the PR
+                    curl -X POST -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments" \
+                    -d '{"body": "This pull request is being closed because there are already 5 open pull requests. Please reopen or create a new pull request once there is an available spot."}'
+                    
                     # Close the newest PR
                     curl -X PATCH -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                       -H "Accept: application/vnd.github.v3+json" \
