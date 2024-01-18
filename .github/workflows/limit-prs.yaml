@@ -1,5 +1,9 @@
 name: Limit Open PRs
-on: [pull_request]
+
+on:
+    pull_request:
+        types: [opened, reopened, synchronize]
+
 jobs:
     limit-prs:
         runs-on: ubuntu-latest
@@ -8,21 +12,21 @@ jobs:
               run: |
                   # Get the number of open PRs
                   PR_COUNT=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  "https://api.github.com/repos/${{ github.repository }}/pulls?state=open" | jq -r '. | length')
+                    "https://api.github.com/repos/${{ github.repository }}/pulls?state=open" | jq -r '. | length')
                   echo "Open PRs: $PR_COUNT"
 
-                  # Check if the limit is reached or exceeded
+                  # Check if the limit is exceeded
                   if [[ "$PR_COUNT" -gt 5 ]]; then
                     echo "Limit of 5 open PRs exceeded. Closing the newest PR."
 
-                  # Get the number of the newest PR (assuming it's the one triggering this action)
-                  PR_NUMBER=${{ github.event.pull_request.number }}
+                    # Get the number of the newest PR (assuming it's the one triggering this action)
+                    PR_NUMBER=${{ github.event.pull_request.number }}
 
-                  # Close the newest PR
-                  curl -X PATCH -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                    -H "Accept: application/vnd.github.v3+json" \
-                    "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER" \
-                    -d '{"state": "closed"}
+                    # Close the newest PR
+                    curl -X PATCH -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                      -H "Accept: application/vnd.github.v3+json" \
+                      "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER" \
+                      -d '{"state": "closed"}'
 
                     echo "PR #$PR_NUMBER has been closed."
                   fi
