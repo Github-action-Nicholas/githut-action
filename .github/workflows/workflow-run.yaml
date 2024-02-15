@@ -10,5 +10,5 @@ jobs:
   echo-string:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "GOOGLE_MAP_API=$${{secrets.GOOGLE_API}}"
+      - run: echo "GOOGLE_MAP_API=${{secrets.GOOGLE_API}}"
       
