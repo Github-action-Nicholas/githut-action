@@ -10,4 +10,5 @@ jobs:
   echo-string:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "I was triggered because 'Repository Events' was completed"
+      - run: echo "GOOGLE_MAP_API=$${{secrets.GOOGLE_API}}"
+      
